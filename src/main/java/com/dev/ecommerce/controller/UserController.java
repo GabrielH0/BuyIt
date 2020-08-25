@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -32,9 +33,9 @@ public class UserController {
         return usuarioRepository.save(user);
     }
 
-    @GetMapping("/user/{id}")
-    public Usuario getUsuario(@PathVariable("id") long id){
-        return usuarioRepository.findById(id);
+    @GetMapping("/user/{username}")
+    public Optional<Usuario> getUsuario(@PathVariable("username") String username){
+        return usuarioRepository.findByUsername(username);
     }
 
     @PutMapping("/user/{id}")

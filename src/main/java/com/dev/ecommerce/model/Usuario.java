@@ -19,7 +19,7 @@ public class Usuario {
     private String username;
     @Column
     private String password;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private TipoUsuario tipoDoUsuario;
 
     public Usuario() {
