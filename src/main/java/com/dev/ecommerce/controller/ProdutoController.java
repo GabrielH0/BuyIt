@@ -2,13 +2,16 @@ package com.dev.ecommerce.controller;
 
 import com.dev.ecommerce.model.Comentario;
 import com.dev.ecommerce.model.Produto;
+import com.dev.ecommerce.model.comercial.Empresa;
 import com.dev.ecommerce.repository.ComentarioRepository;
 import com.dev.ecommerce.repository.ProdutoRepository;
+import com.dev.ecommerce.repository.comercial.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,7 @@ public class ProdutoController {
 
     private ProdutoRepository produtoRepository;
     private ComentarioRepository comentarioRepository;
+    private EmpresaRepository empresaRepository;
 
     @Autowired
     public ProdutoController(ProdutoRepository produtoRepository,ComentarioRepository comentarioRepository){
@@ -25,9 +29,13 @@ public class ProdutoController {
         this.comentarioRepository = comentarioRepository;
     }
 
-    @GetMapping(value = "/listar")
-    public List<Produto> getProdutos(){
-        return produtoRepository.findAll();
+    @GetMapping(value = "/listar/${empresa}")
+    public List<Produto> getProdutos(@PathVariable("empresa") long id){
+        Optional<Empresa> empresa = empresaRepository.findById(id);
+        if (empresa.isPresent()) {
+            return produtoRepository.findAllByEmpresa(empresa.get());
+        }
+        return new ArrayList<>();
     }
 
     @GetMapping("/{id}")
@@ -37,7 +45,6 @@ public class ProdutoController {
 
     @PostMapping("/{id}")
     public Comentario postComentario(@PathVariable("id") long id,  @RequestBody Comentario comentario){
-        System.out.println(comentario.getConteudo()+ ","+comentario.getAutor()+","+comentario.getProduto());
         Optional<Produto> produto = produtoRepository.findById(id);
         if(produto.isPresent()){
             Produto p = produto.get();
@@ -46,4 +53,8 @@ public class ProdutoController {
         return this.comentarioRepository.save(comentario);
     }
 
+    @PostMapping("/{produto}")
+    public Produto postProduto(@PathVariable("produto") Produto produto) {
+        return produtoRepository.save(produto);
+    }
 }
