@@ -24,13 +24,14 @@ public class ProdutoController {
     private EmpresaRepository empresaRepository;
 
     @Autowired
-    public ProdutoController(ProdutoRepository produtoRepository,ComentarioRepository comentarioRepository){
+    public ProdutoController(ProdutoRepository produtoRepository,ComentarioRepository comentarioRepository, EmpresaRepository empresaRepository){
         this.produtoRepository = produtoRepository;
         this.comentarioRepository = comentarioRepository;
+        this.empresaRepository = empresaRepository;
     }
 
-    @GetMapping(value = "/listar/${empresa}")
-    public List<Produto> getProdutos(@PathVariable("empresa") long id){
+    @GetMapping(value = "/listar/{empresa}")
+    public List<Produto> getProdutos(@PathVariable("empresa") Long id){
         Optional<Empresa> empresa = empresaRepository.findById(id);
         if (empresa.isPresent()) {
             return produtoRepository.findAllByEmpresa(empresa.get());
@@ -53,8 +54,8 @@ public class ProdutoController {
         return this.comentarioRepository.save(comentario);
     }
 
-    @PostMapping("/{produto}")
-    public Produto postProduto(@PathVariable("produto") Produto produto) {
+    @PostMapping("/new")
+    public Produto postProduto(@RequestBody Produto produto) {
         return produtoRepository.save(produto);
     }
 }
